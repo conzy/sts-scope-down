@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import boto3
 from boto3.session import Session
 from botocore.exceptions import ClientError
@@ -88,6 +89,9 @@ def test_get_object_outside_scope_down_fails():
 
 
 def lambda_handler(event, context):
+    # Ugly but gets around IAM eventual consistency problems for the demo because we attempt to
+    # assume the role before the trust relationship works.
+    time.sleep(10)
     results = [
         test_get_object_with_lambda_role_fails(),
         test_get_object_with_assumed_role_succeeds(),
